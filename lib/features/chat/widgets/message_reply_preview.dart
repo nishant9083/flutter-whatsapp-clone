@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:whatsapp_ui/common/providers/message_reply_provider.dart';
 import 'package:whatsapp_ui/features/chat/widgets/display_text_image_gif.dart';
 
+import '../../../common/utils/colors.dart';
+
 class MessageReplyPreview extends ConsumerWidget {
   const MessageReplyPreview({Key? key}) : super(key: key);
 
@@ -17,14 +19,15 @@ class MessageReplyPreview extends ConsumerWidget {
     return Container(
       width: 350,
       padding: const EdgeInsets.all(8),
-      decoration: const BoxDecoration(
-        color: Colors.transparent,
+      decoration:  const BoxDecoration(
+        color: messageColor,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(12),
           topRight: Radius.circular(12),
         ),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
@@ -45,10 +48,22 @@ class MessageReplyPreview extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          DisplayTextImageGIF(
-            message: messageReply.message,
-            type: messageReply.messageEnum,
+          const SizedBox(height: 6),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(4.0),
+            decoration: BoxDecoration(
+              color: Colors.grey[300]?.withOpacity(0.5),
+              borderRadius: const BorderRadius.all(
+                Radius.circular(
+                  5,
+                ),
+              ),
+            ),
+            child: DisplayTextImageGIF(
+              message: messageReply.message,
+              type: messageReply.messageEnum,
+            ),
           ),
         ],
       ),

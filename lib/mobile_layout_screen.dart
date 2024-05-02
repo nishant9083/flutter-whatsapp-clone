@@ -10,6 +10,8 @@ import 'package:whatsapp_ui/features/chat/widgets/contacts_list.dart';
 import 'package:whatsapp_ui/features/status/screens/confirm_status_screen.dart';
 import 'package:whatsapp_ui/features/status/screens/status_contacts_screen.dart';
 
+import 'features/profile/screens/profile_screen.dart';
+
 class MobileLayoutScreen extends ConsumerStatefulWidget {
   const MobileLayoutScreen({Key? key}) : super(key: key);
 
@@ -84,7 +86,22 @@ class _MobileLayoutScreenState extends ConsumerState<MobileLayoutScreen>
                     () => Navigator.pushNamed(
                         context, CreateGroupScreen.routeName),
                   ),
-                )
+                ),
+                PopupMenuItem(
+                  child: const Text(
+                    'Settings',
+                  ),
+                  onTap: () {},
+                ),
+                PopupMenuItem(
+                  child: const Text(
+                    'Log Out',
+                  ),
+                  onTap: () => ref.read(authControllerProvider).signOut(),
+                ),
+                PopupMenuItem(child: const Text('Profile'),
+                onTap: () => Navigator.pushNamed(context, ProfilePage.routeName)
+                ),
               ],
             ),
           ],
@@ -115,7 +132,7 @@ class _MobileLayoutScreenState extends ConsumerState<MobileLayoutScreen>
           children: const [
             ContactsList(),
             StatusContactsScreen(),
-            Text('Calls')
+            Text('Calls history Screen')
           ],
         ),
         floatingActionButton: FloatingActionButton(

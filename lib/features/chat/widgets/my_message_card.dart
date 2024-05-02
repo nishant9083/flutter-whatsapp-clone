@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:swipe_to/swipe_to.dart';
 
 import 'package:whatsapp_ui/common/utils/colors.dart';
@@ -30,13 +31,17 @@ class MyMessageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isReplying = repliedText.isNotEmpty;
+    String formattedDate = DateFormat('hh:mm a').format(DateTime.parse(date));
 
     return SwipeTo(
-      onLeftSwipe: onLeftSwipe,
+      onLeftSwipe: (dragUpdateDetails) {
+        onLeftSwipe();
+      },
       child: Align(
         alignment: Alignment.centerRight,
         child: ConstrainedBox(
           constraints: BoxConstraints(
+            minWidth: 140,
             maxWidth: MediaQuery.of(context).size.width - 45,
           ),
           child: Card(
@@ -62,6 +67,7 @@ class MyMessageCard extends StatelessWidget {
                           bottom: 25,
                         ),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       if (isReplying) ...[
                         Text(
@@ -74,7 +80,7 @@ class MyMessageCard extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: backgroundColor.withOpacity(0.5),
+                            color: Colors.grey[300]?.withOpacity(0.5),
                             borderRadius: const BorderRadius.all(
                               Radius.circular(
                                 5,
@@ -101,7 +107,7 @@ class MyMessageCard extends StatelessWidget {
                   child: Row(
                     children: [
                       Text(
-                        date,
+                        formattedDate,
                         style: const TextStyle(
                           fontSize: 13,
                           color: Colors.white60,
@@ -112,7 +118,7 @@ class MyMessageCard extends StatelessWidget {
                       ),
                       Icon(
                         isSeen ? Icons.done_all : Icons.done,
-                        size: 20,
+                        size: 15,
                         color: isSeen ? Colors.blue : Colors.white60,
                       ),
                     ],

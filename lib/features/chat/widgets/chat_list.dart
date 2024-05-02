@@ -39,7 +39,7 @@ class _ChatListState extends ConsumerState<ChatList> {
     bool isMe,
     MessageEnum messageEnum,
   ) {
-    ref.read(messageReplyProvider.state).update(
+    ref.read(messageReplyProvider.notifier).update(
           (state) => MessageReply(
             message,
             isMe,
@@ -73,7 +73,7 @@ class _ChatListState extends ConsumerState<ChatList> {
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
               final messageData = snapshot.data![index];
-              var timeSent = DateFormat.Hm().format(messageData.timeSent);
+              var timeSent = messageData.timeSent.toString();
 
               if (!messageData.isSeen &&
                   messageData.recieverid ==

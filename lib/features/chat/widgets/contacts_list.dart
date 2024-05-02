@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -128,14 +129,37 @@ class ContactsList extends ConsumerWidget {
                                     style: const TextStyle(fontSize: 15),
                                   ),
                                 ),
-                                leading: CircleAvatar(
-                                  backgroundImage: NetworkImage(
-                                    chatContactData.profilePic,
+                                leading: GestureDetector(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return Container(
+                                          padding: const EdgeInsets.all(5.0),
+                                          height: 300,
+                                          child: Center(
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              child: CachedNetworkImage(
+                                                imageUrl:chatContactData.profilePic,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: CircleAvatar(
+                                    backgroundImage: NetworkImage(
+                                      chatContactData.profilePic,
+                                    ),
+                                    radius: 30,
                                   ),
-                                  radius: 30,
                                 ),
                                 trailing: Text(
-                                  DateFormat.Hm()
+                                  DateFormat('hh:mm a')
                                       .format(chatContactData.timeSent),
                                   style: const TextStyle(
                                     color: Colors.grey,

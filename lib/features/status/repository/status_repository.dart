@@ -108,6 +108,7 @@ class StatusRepository {
 
       await firestore.collection('status').doc(statusId).set(status.toMap());
     } catch (e) {
+      print('error is here');
       showSnackBar(context: context, content: e.toString());
     }
   }
@@ -120,22 +121,25 @@ class StatusRepository {
         contacts = await FlutterContacts.getContacts(withProperties: true);
       }
       for (int i = 0; i < contacts.length; i++) {
-        var statusesSnapshot = await firestore
-            .collection('status')
-            .where(
-              'phoneNumber',
-              isEqualTo: contacts[i].phones[0].number.replaceAll(
-                    ' ',
-                    '',
-                  ),
-            )
-            .where(
-              'createdAt',
-              isGreaterThan: DateTime.now()
-                  .subtract(const Duration(hours: 24))
-                  .millisecondsSinceEpoch,
-            )
-            .get();
+        // print('${i}/${contacts[i].phones[0].number}/nishant');
+        if (contacts[i].phones.isNotEmpty) {
+          var statusesSnapshot = await firestore
+              .collection('status')
+              .where(
+            'phoneNumber',
+            isEqualTo: contacts[i].phones[0].number.replaceAll(
+              ' ',
+              '',
+            ),
+          )
+              .where(
+            'createdAt',
+            isGreaterThan: DateTime
+                .now()
+                .subtract(const Duration(hours: 24))
+                .millisecondsSinceEpoch,
+          )
+              .get();
         for (var tempData in statusesSnapshot.docs) {
           Status tempStatus = Status.fromMap(tempData.data());
           if (tempStatus.whoCanSee.contains(auth.currentUser!.uid)) {
@@ -143,8 +147,10 @@ class StatusRepository {
           }
         }
       }
+      }
     } catch (e) {
       if (kDebugMode) print(e);
+      print('oh here');
       showSnackBar(context: context, content: e.toString());
     }
     return statusData;

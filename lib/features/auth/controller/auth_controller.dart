@@ -49,6 +49,18 @@ class AuthController {
       context: context,
     );
   }
+  void updateUserDataToFirebase(
+      BuildContext context, String name, File? profilePic) {
+    authRepository.updateUserData(
+      name: name,
+      profilePic: profilePic,
+      ref: ref,
+      context: context,
+    );
+  }
+  void signOut() {
+    authRepository.logOut();
+  }
 
   Stream<UserModel> userDataById(String userId) {
     return authRepository.userData(userId);

@@ -12,6 +12,8 @@ import 'package:whatsapp_ui/features/status/screens/confirm_status_screen.dart';
 import 'package:whatsapp_ui/features/status/screens/status_screen.dart';
 import 'package:whatsapp_ui/models/status_model.dart';
 
+import 'features/profile/screens/profile_screen.dart';
+
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
     case LoginScreen.routeName:
@@ -37,8 +39,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       final arguments = settings.arguments as Map<String, dynamic>;
       final name = arguments['name'];
       final uid = arguments['uid'];
-      final isGroupChat = arguments['isGroupChat'];
-      final profilePic = arguments['profilePic'];
+      final isGroupChat = arguments['isGroupChat']?? false;
+      final profilePic = arguments['profilePic']?? '';
       return MaterialPageRoute(
         builder: (context) => MobileChatScreen(
           name: name,
@@ -64,6 +66,18 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case CreateGroupScreen.routeName:
       return MaterialPageRoute(
         builder: (context) => const CreateGroupScreen(),
+      );
+      case ProfilePage.routeName:
+        // final arguments = settings.arguments as Map<String, dynamic>;
+        // final name = arguments['name'];
+        // final uid = arguments['uid'];
+        // final profilePic = arguments['profilePic'];
+      return MaterialPageRoute(
+        builder: (context) => const ProfilePage(
+          // name: name,
+          // uid: uid,
+          // profilePic: profilePic,
+        ),
       );
     default:
       return MaterialPageRoute(

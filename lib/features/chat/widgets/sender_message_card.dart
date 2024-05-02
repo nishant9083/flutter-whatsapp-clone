@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:swipe_to/swipe_to.dart';
 
 import 'package:whatsapp_ui/common/utils/colors.dart';
@@ -27,13 +28,17 @@ class SenderMessageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isReplying = repliedText.isNotEmpty;
+    String formattedDate = DateFormat('hh:mm a').format(DateTime.parse(date));
 
     return SwipeTo(
-      onRightSwipe: onRightSwipe,
+      onRightSwipe: (dragUpdateDetails) {
+        onRightSwipe();
+      },
       child: Align(
         alignment: Alignment.centerLeft,
         child: ConstrainedBox(
           constraints: BoxConstraints(
+            minWidth: 140,
             maxWidth: MediaQuery.of(context).size.width - 45,
           ),
           child: Card(
@@ -71,7 +76,7 @@ class SenderMessageCard extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: backgroundColor.withOpacity(0.5),
+                            color: Colors.grey[300]?.withOpacity(0.5),
                             borderRadius: const BorderRadius.all(
                               Radius.circular(
                                 5,
@@ -96,7 +101,7 @@ class SenderMessageCard extends StatelessWidget {
                   bottom: 2,
                   right: 10,
                   child: Text(
-                    date,
+                    formattedDate,
                     style: TextStyle(
                       fontSize: 13,
                       color: Colors.grey[600],

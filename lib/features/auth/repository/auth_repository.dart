@@ -125,6 +125,40 @@ class AuthRepository {
     }
   }
 
+  void updateUserData({
+    required String name,
+    required File? profilePic,
+    required ProviderRef ref,
+    required BuildContext context,
+  }) async {
+    try {
+      String uid = auth.currentUser!.uid;
+      String photoUrl ;
+
+      if (profilePic != null) {
+        photoUrl = await ref
+            .read(commonFirebaseStorageRepositoryProvider)
+            .storeFileToFirebase(
+              'profilePic/$uid',
+              profilePic,
+            );
+        var user = Map<String, dynamic>.from({
+          'name': name,
+          'profilePic': photoUrl,
+        });
+      await firestore.collection('users').doc(uid).update(user);
+      }
+      else{
+        var user = Map<String, dynamic>.from({
+          'name': name,
+        });
+      await firestore.collection('users').doc(uid).update(user);
+      }
+    } catch (e) {
+      showSnackBar(context: context, content: e.toString());
+    }
+  }
+
   Stream<UserModel> userData(String userId) {
     return firestore.collection('users').doc(userId).snapshots().map(
           (event) => UserModel.fromMap(
@@ -137,5 +171,9 @@ class AuthRepository {
     await firestore.collection('users').doc(auth.currentUser!.uid).update({
       'isOnline': isOnline,
     });
+  }
+
+  void logOut() {
+    auth.signOut();
   }
 }

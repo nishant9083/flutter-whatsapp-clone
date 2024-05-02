@@ -110,15 +110,15 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
   }
 
   void selectGIF() async {
-    final gif = await pickGIF(context);
-    if (gif != null) {
-      ref.read(chatControllerProvider).sendGIFMessage(
-            context,
-            gif.url,
-            widget.recieverUserId,
-            widget.isGroupChat,
-          );
-    }
+    // final gif = await pickGIF(context);
+    // if (gif != null) {
+    //   ref.read(chatControllerProvider).sendGIFMessage(
+    //         context,
+    //         gif.url,
+    //         widget.recieverUserId,
+    //         widget.isGroupChat,
+    //       );
+    // }
   }
 
   void hideEmojiContainer() {
@@ -164,78 +164,86 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
         Row(
           children: [
             Expanded(
-              child: TextFormField(
-                focusNode: focusNode,
-                controller: _messageController,
-                onChanged: (val) {
-                  if (val.isNotEmpty) {
-                    setState(() {
-                      isShowSendButton = true;
-                    });
-                  } else {
-                    setState(() {
-                      isShowSendButton = false;
-                    });
-                  }
-                },
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: mobileChatBoxColor,
-                  prefixIcon: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: SizedBox(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 6.0),
+                child: TextFormField(
+                  focusNode: focusNode,
+                  controller: _messageController,
+                  onChanged: (val) {
+                    if (val.isNotEmpty) {
+                      setState(() {
+                        isShowSendButton = true;
+                      });
+                    } else {
+                      setState(() {
+                        isShowSendButton = false;
+                      });
+                    }
+                  },
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: mobileChatBoxColor,
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                      child: SizedBox(
+                        width: 100,
+                        child: Row(
+                          children: [
+                            IconButton(
+                              onPressed: toggleEmojiKeyboardContainer,
+                              icon: const Icon(
+                                Icons.emoji_emotions,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: selectGIF,
+                              icon: const Icon(
+                                Icons.gif,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    suffixIcon: SizedBox(
                       width: 100,
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           IconButton(
-                            onPressed: toggleEmojiKeyboardContainer,
+                            onPressed: selectImage,
                             icon: const Icon(
-                              Icons.emoji_emotions,
+                              Icons.camera_alt,
                               color: Colors.grey,
                             ),
                           ),
                           IconButton(
-                            onPressed: selectGIF,
+                            onPressed: () {
+                              showModalBottomSheet(
+                                  backgroundColor: Colors.transparent,
+                                  context: context,
+                                  builder: (builder) => bottomSheet());
+                            },
                             icon: const Icon(
-                              Icons.gif,
+                              Icons.attach_file,
                               color: Colors.grey,
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                  suffixIcon: SizedBox(
-                    width: 100,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        IconButton(
-                          onPressed: selectImage,
-                          icon: const Icon(
-                            Icons.camera_alt,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: selectVideo,
-                          icon: const Icon(
-                            Icons.attach_file,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
+                    hintText: 'Type a message!',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                      borderSide: const BorderSide(
+                        width: 0,
+                        style: BorderStyle.none,
+                      ),
                     ),
+                    contentPadding: const EdgeInsets.all(10),
                   ),
-                  hintText: 'Type a message!',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                    borderSide: const BorderSide(
-                      width: 0,
-                      style: BorderStyle.none,
-                    ),
-                  ),
-                  contentPadding: const EdgeInsets.all(10),
                 ),
               ),
             ),
@@ -247,7 +255,7 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
               ),
               child: CircleAvatar(
                 backgroundColor: const Color(0xFF128C7E),
-                radius: 25,
+                radius: 24,
                 child: GestureDetector(
                   child: Icon(
                     isShowSendButton
@@ -267,6 +275,19 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
             ? SizedBox(
                 height: 310,
                 child: EmojiPicker(
+                  onBackspacePressed: () {
+                    _messageController.text = _messageController.text
+                        .substring(0, _messageController.text.length - 1);
+                  },
+                  config: const Config(
+                    height: 256,
+                    checkPlatformCompatibility: true,
+                    swapCategoryAndBottomBar:  false,
+                    skinToneConfig: SkinToneConfig(),
+                    categoryViewConfig: CategoryViewConfig(),
+                    bottomActionBarConfig: BottomActionBarConfig(),
+                    searchViewConfig: SearchViewConfig(),
+                  ),
                   onEmojiSelected: ((category, emoji) {
                     setState(() {
                       _messageController.text =
@@ -283,6 +304,66 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
               )
             : const SizedBox(),
       ],
+    );
+  }
+
+  Widget bottomSheet() {
+    return SizedBox(
+      height: 270,
+      width: MediaQuery.of(context).size.width,
+      child: Card(
+        margin: const EdgeInsets.all(18),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  bottomSheetIcons(
+                      Icons.insert_drive_file, Colors.indigo, "Document"),
+                  SizedBox(width: 40),
+                  bottomSheetIcons(Icons.camera_alt, Colors.pink, "Camera"),
+                  SizedBox(width: 40),
+                  bottomSheetIcons(Icons.insert_photo, Colors.purple, "Gallery")
+                ],
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  bottomSheetIcons(Icons.headset, Colors.orange, "Audio"),
+                  SizedBox(width: 40),
+                  bottomSheetIcons(Icons.location_pin, Colors.teal, "Location"),
+                  SizedBox(width: 40),
+                  bottomSheetIcons(Icons.person, Colors.blue, "Contact")
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget bottomSheetIcons(IconData icon, Color bgColor, String text) {
+    return InkWell(
+      onTap: () {},
+      child: Column(
+        children: [
+          CircleAvatar(
+            backgroundColor: bgColor,
+            radius: 30,
+            child: Icon(icon, size: 29, color: Colors.white),
+          ),
+          const SizedBox(
+            height: 5,
+          ),
+          Text(text, style: const TextStyle(fontSize: 12))
+        ],
+      ),
     );
   }
 }

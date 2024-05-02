@@ -13,8 +13,8 @@
     <!-- The Agora SDK requires Bluetooth permissions in case users are using Bluetooth devices.-->
     <uses-permission  android:name="android.permission.BLUETOOTH"  />
    <application
-        android:label="whatsapp_ui"
-        android:icon="@mipmap/ic_launcher">
+        android:label="ChatBh"
+        android:icon="@drawable/chatbh">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
