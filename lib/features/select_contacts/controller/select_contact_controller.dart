@@ -25,7 +25,7 @@ class SelectContactController {
     required this.selectContactRepository,
   });
 
-  void selectContact(Contact selectedContact, BuildContext context) {
+  void selectContact(Map<String, dynamic> selectedContact, BuildContext context) {
     selectContactRepository.selectContact(selectedContact, context);
   }
 }

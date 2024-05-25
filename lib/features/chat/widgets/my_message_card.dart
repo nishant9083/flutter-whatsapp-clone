@@ -48,7 +48,7 @@ class MyMessageCard extends StatelessWidget {
             elevation: 1,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            color: messageColor,
+            color: Theme.of(context).brightness == Brightness.dark? messageColor : lightMessageColor,
             margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             child: Stack(
               children: [
@@ -108,9 +108,9 @@ class MyMessageCard extends StatelessWidget {
                     children: [
                       Text(
                         formattedDate,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
-                          color: Colors.white60,
+                          color: Theme.of(context).brightness == Brightness.dark? Colors.white60: Colors.black54,
                         ),
                       ),
                       const SizedBox(
@@ -119,7 +119,8 @@ class MyMessageCard extends StatelessWidget {
                       Icon(
                         isSeen ? Icons.done_all : Icons.done,
                         size: 15,
-                        color: isSeen ? Colors.blue : Colors.white60,
+                        color: Theme.of(context).brightness == Brightness.dark?
+                        (isSeen ? Colors.blue : Colors.white60): (isSeen ? Colors.blue : Colors.black54),
                       ),
                     ],
                   ),

@@ -1,4 +1,4 @@
-class Group {
+class ChatGroup {
   final String senderId;
   final String name;
   final String groupId;
@@ -6,7 +6,7 @@ class Group {
   final String groupPic;
   final List<String> membersUid;
   final DateTime timeSent;
-  Group({
+  ChatGroup({
     required this.senderId,
     required this.name,
     required this.groupId,
@@ -28,8 +28,8 @@ class Group {
     };
   }
 
-  factory Group.fromMap(Map<String, dynamic> map) {
-    return Group(
+  factory ChatGroup.fromMap(Map<String, dynamic> map) {
+    return ChatGroup(
       senderId: map['senderId'] ?? '',
       name: map['name'] ?? '',
       groupId: map['groupId'] ?? '',

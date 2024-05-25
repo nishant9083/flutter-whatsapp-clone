@@ -29,7 +29,7 @@ class GroupRepository {
   });
 
   void createGroup(BuildContext context, String name, File profilePic,
-      List<Contact> selectedContact) async {
+      List<Map<String, dynamic>> selectedContact) async {
     try {
       List<String> uids = [];
       for (int i = 0; i < selectedContact.length; i++) {
@@ -37,7 +37,7 @@ class GroupRepository {
             .collection('users')
             .where(
               'phoneNumber',
-              isEqualTo: selectedContact[i].phones[0].number.replaceAll(
+              isEqualTo: selectedContact[i]['phones'][0].number.replaceAll(
                     ' ',
                     '',
                   ),
@@ -56,7 +56,7 @@ class GroupRepository {
             'group/$groupId',
             profilePic,
           );
-      model.Group group = model.Group(
+      model.ChatGroup group = model.ChatGroup(
         senderId: auth.currentUser!.uid,
         name: name,
         groupId: groupId,

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +11,8 @@ import 'package:whatsapp_ui/features/auth/screens/otp_screen.dart';
 import 'package:whatsapp_ui/features/auth/screens/user_information_screen.dart';
 import 'package:whatsapp_ui/models/user_model.dart';
 import 'package:whatsapp_ui/mobile_layout_screen.dart';
+
+import '../../landing/screens/landing_screen.dart';
 
 final authRepositoryProvider = Provider(
   (ref) => AuthRepository(
@@ -72,11 +75,19 @@ class AuthRepository {
         smsCode: userOTP,
       );
       await auth.signInWithCredential(credential);
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        UserInformationScreen.routeName,
-        (route) => false,
-      );
+      if(firestore.collection('users').doc(auth.currentUser!.uid).get().toString() == 'null'){
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          UserInformationScreen.routeName,
+              (route) => false,
+        );
+      }
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          MobileLayoutScreen.routeName,
+              (route) => false,
+        );
+
     } on FirebaseAuthException catch (e) {
       showSnackBar(context: context, content: e.message!);
     }
@@ -173,7 +184,12 @@ class AuthRepository {
     });
   }
 
-  void logOut() {
+  void logOut(BuildContext context) {
     auth.signOut();
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      LandingScreen.routeName,
+      (route) => false,
+    );
   }
 }

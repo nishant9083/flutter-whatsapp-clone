@@ -1,5 +1,6 @@
 import 'dart:io';
 // import 'package:enough_giphy_flutter/enough_giphy_flutter.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -39,6 +40,21 @@ Future<File?> pickVideoFromGallery(BuildContext context) async {
     showSnackBar(context: context, content: e.toString());
   }
   return video;
+}
+
+Future<File?> pickDocument(BuildContext context) async {
+  File? document;
+  try {
+    final pickedDocument =
+        await FilePicker.platform.pickFiles(type: FileType.any);
+
+    if (pickedDocument != null) {
+      document = File(pickedDocument.files.single.path!);
+    }
+  } catch (e) {
+    showSnackBar(context: context, content: e.toString());
+  }
+  return document;
 }
 
 // Future<GiphyGif?> pickGIF(BuildContext context) async {

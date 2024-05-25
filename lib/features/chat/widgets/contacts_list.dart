@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:whatsapp_ui/common/utils/colors.dart';
 import 'package:whatsapp_ui/common/widgets/loader.dart';
 import 'package:whatsapp_ui/features/chat/controller/chat_controller.dart';
@@ -9,8 +10,24 @@ import 'package:whatsapp_ui/features/chat/screens/mobile_chat_screen.dart';
 import 'package:whatsapp_ui/models/chat_contact.dart';
 import 'package:whatsapp_ui/models/group.dart';
 
+import '../../select_contacts/controller/select_contact_controller.dart';
+
 class ContactsList extends ConsumerWidget {
   const ContactsList({Key? key}) : super(key: key);
+
+
+  String formatChatTime(DateTime timeSent) {
+    final now = DateTime.now();
+    final difference = now.difference(timeSent);
+
+    if (now.day == timeSent.day) {
+      return DateFormat('hh:mm a').format(timeSent);
+    } else if (difference.inDays < 7) {
+      return DateFormat('EEEE').format(timeSent); // EEEE gives full name of the weekday
+    } else {
+      return DateFormat('d/M/yy').format(timeSent);
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -19,13 +36,46 @@ class ContactsList extends ConsumerWidget {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            StreamBuilder<List<Group>>(
+            StreamBuilder<List<ChatGroup>>(
                 stream: ref.watch(chatControllerProvider).chatGroups(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Loader();
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: 3,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Shimmer.fromColors(
+                            baseColor: Colors.grey[400]!,
+                            highlightColor: Colors.grey[100]!,
+                            child: const Text('Loading'),
+                          ),
+                          subtitle: Shimmer.fromColors(
+                            baseColor: Colors.grey[300]!,
+                            highlightColor: Colors.grey[100]!,
+                            child: const Text('message'),
+                          ),
+                          leading: Shimmer.fromColors(
+                            baseColor: Colors.grey[300]!,
+                            highlightColor: Colors.grey[100]!,
+                            child: const CircleAvatar(
+                              backgroundColor: Colors.white,
+                              radius: 30,
+                            ),
+                          ),
+                          trailing: Shimmer.fromColors(
+                            baseColor: Colors.grey[300]!,
+                            highlightColor: Colors.grey[100]!,
+                            child: const Text('now'),
+                          )
+                        );
+                      },
+                    );
                   }
+                  else if(snapshot.data ==null || snapshot.data!.isEmpty){
+                    return Container();
 
+                  }
                   return ListView.builder(
                     shrinkWrap: true,
                     itemCount: snapshot.data!.length,
@@ -86,10 +136,45 @@ class ContactsList extends ConsumerWidget {
                   );
                 }),
             StreamBuilder<List<ChatContact>>(
-                stream: ref.watch(chatControllerProvider).chatContacts(),
+                stream:ref.watch(chatControllerProvider).chatContacts(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Loader();
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: 3,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                            title: Shimmer.fromColors(
+                              baseColor: Colors.grey[400]!,
+                              highlightColor: Colors.grey[100]!,
+                              child: const Text('Loading')
+                            ),
+                            subtitle: Shimmer.fromColors(
+                              baseColor: Colors.grey[300]!,
+                              highlightColor: Colors.grey[100]!,
+                              child: const Text('message')
+                            ),
+                            leading: Shimmer.fromColors(
+                              baseColor: Colors.grey[300]!,
+                              highlightColor: Colors.grey[100]!,
+                              child: const CircleAvatar(
+                                backgroundColor: Colors.white,
+                                radius: 30,
+                              ),
+                            ),
+                            trailing: Shimmer.fromColors(
+                              baseColor: Colors.grey[300]!,
+                              highlightColor: Colors.grey[100]!,
+                              child: const Text('now')
+                            )
+                        );
+                      },
+                    );
+                  }
+                  else if(snapshot.data ==null || snapshot.data!.isEmpty){
+                    return const Center(
+                      child: Text('No chat available'),
+                    );
                   }
 
                   return ListView.builder(
@@ -144,6 +229,8 @@ class ContactsList extends ConsumerWidget {
                                               child: CachedNetworkImage(
                                                 imageUrl:chatContactData.profilePic,
                                                 fit: BoxFit.cover,
+                                                height: 300,
+                                                // width: 300,
                                               ),
                                             ),
                                           ),
@@ -159,8 +246,7 @@ class ContactsList extends ConsumerWidget {
                                   ),
                                 ),
                                 trailing: Text(
-                                  DateFormat('hh:mm a')
-                                      .format(chatContactData.timeSent),
+                                  formatChatTime(chatContactData.timeSent),
                                   style: const TextStyle(
                                     color: Colors.grey,
                                     fontSize: 13,

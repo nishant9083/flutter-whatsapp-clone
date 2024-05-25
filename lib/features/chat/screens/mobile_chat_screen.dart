@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:whatsapp_ui/common/utils/colors.dart';
 import 'package:whatsapp_ui/common/widgets/loader.dart';
 import 'package:whatsapp_ui/features/auth/controller/auth_controller.dart';
@@ -38,26 +39,48 @@ class MobileChatScreen extends ConsumerWidget {
     return CallPickupScreen(
       scaffold: Scaffold(
         appBar: AppBar(
-          backgroundColor: appBarColor,
+          // backgroundColor: appBarColor,
           title: isGroupChat
               ? Text(name)
               : StreamBuilder<UserModel>(
                   stream: ref.read(authControllerProvider).userDataById(uid),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Loader();
+                      return Column(
+                          children: [
+                            Shimmer.fromColors(
+                              baseColor: Colors.grey[500]!,
+                              highlightColor: Colors.grey[300]!,
+                              child: const Text(''),
+                            ),
+                            Shimmer.fromColors(
+                              baseColor: Colors.grey[400]!,
+                              highlightColor: Colors.grey[100]!,
+                              child: const Text(''),
+                            )
+                          ],
+                      );
                     }
-                    return Column(
-                      children: [
-                        Text(name),
-                        Text(
-                          snapshot.data!.isOnline ? 'online' : 'offline',
-                          style: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.normal,
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          '/user-profile',
+                          arguments: snapshot.data,
+                        );
+                      },
+                      child: Column(
+                        children: [
+                          Text(name),
+                          Text(
+                            snapshot.data!.isOnline ? 'online' : 'offline',
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.normal,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     );
                   }),
           centerTitle: false,

@@ -13,6 +13,7 @@ import 'package:whatsapp_ui/features/status/screens/status_contacts_screen.dart'
 import 'features/profile/screens/profile_screen.dart';
 
 class MobileLayoutScreen extends ConsumerStatefulWidget {
+  static const String routeName = '/mobile-layout-screen';
   const MobileLayoutScreen({Key? key}) : super(key: key);
 
   @override
@@ -47,6 +48,9 @@ class _MobileLayoutScreenState extends ConsumerState<MobileLayoutScreen>
       case AppLifecycleState.paused:
         ref.read(authControllerProvider).setUserState(false);
         break;
+      case AppLifecycleState.hidden:
+        ref.read(authControllerProvider).setUserState(false);
+        break;
     }
   }
 
@@ -57,13 +61,13 @@ class _MobileLayoutScreenState extends ConsumerState<MobileLayoutScreen>
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
-          backgroundColor: appBarColor,
+          // backgroundColor: appBarColor,
           centerTitle: false,
           title: const Text(
-            'WhatsApp',
+            'ChatBh',
             style: TextStyle(
               fontSize: 20,
-              color: Colors.grey,
+              color: titleColor ,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -87,30 +91,24 @@ class _MobileLayoutScreenState extends ConsumerState<MobileLayoutScreen>
                         context, CreateGroupScreen.routeName),
                   ),
                 ),
-                PopupMenuItem(
-                  child: const Text(
-                    'Settings',
-                  ),
-                  onTap: () {},
+                PopupMenuItem(child: const Text('Profile'),
+                onTap: () => Navigator.pushNamed(context, ProfilePage.routeName)
                 ),
                 PopupMenuItem(
                   child: const Text(
                     'Log Out',
                   ),
-                  onTap: () => ref.read(authControllerProvider).signOut(),
-                ),
-                PopupMenuItem(child: const Text('Profile'),
-                onTap: () => Navigator.pushNamed(context, ProfilePage.routeName)
+                  onTap: () => ref.read(authControllerProvider).signOut(context),
                 ),
               ],
             ),
           ],
           bottom: TabBar(
             controller: tabBarController,
-            indicatorColor: tabColor,
+            // indicatorColor: tabColor,
             indicatorWeight: 4,
-            labelColor: tabColor,
-            unselectedLabelColor: Colors.grey,
+            // labelColor: tabColor,
+            // unselectedLabelColor: Colors.grey,
             labelStyle: const TextStyle(
               fontWeight: FontWeight.bold,
             ),
@@ -139,7 +137,7 @@ class _MobileLayoutScreenState extends ConsumerState<MobileLayoutScreen>
           onPressed: () async {
             if (tabBarController.index == 0) {
               Navigator.pushNamed(context, SelectContactsScreen.routeName);
-            } else {
+            } else if(tabBarController.index == 1) {
               File? pickedImage = await pickImageFromGallery(context);
               if (pickedImage != null) {
                 Navigator.pushNamed(
@@ -151,8 +149,10 @@ class _MobileLayoutScreenState extends ConsumerState<MobileLayoutScreen>
             }
           },
           backgroundColor: tabColor,
-          child: const Icon(
-            Icons.comment,
+          child: Icon(
+            tabBarController.index == 0 ? Icons.message :
+            tabBarController.index == 1 ? Icons.camera_alt :
+            Icons.call,
             color: Colors.white,
           ),
         ),

@@ -7,6 +7,7 @@ import 'package:whatsapp_ui/common/utils/utils.dart';
 import 'package:whatsapp_ui/features/group/controller/group_controller.dart';
 import 'package:whatsapp_ui/features/group/widgets/select_contacts_group.dart';
 
+final searchController = StateProvider<TextEditingController>((ref) => TextEditingController());
 class CreateGroupScreen extends ConsumerStatefulWidget {
   static const String routeName = '/create-group';
   const CreateGroupScreen({Key? key}) : super(key: key);
@@ -18,6 +19,7 @@ class CreateGroupScreen extends ConsumerStatefulWidget {
 class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
   final TextEditingController groupNameController = TextEditingController();
   File? image;
+  final isSearchingProvider = StateProvider<bool>((ref) => false);
 
   void selectImage() async {
     image = await pickImageFromGallery(context);
@@ -32,7 +34,7 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
             image!,
             ref.read(selectedGroupContacts),
           );
-      ref.read(selectedGroupContacts.state).update((state) => []);
+      ref.read(selectedGroupContacts.notifier).update((state) => []);
       Navigator.pop(context);
     }
   }
@@ -41,14 +43,47 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
   void dispose() {
     super.dispose();
     groupNameController.dispose();
+
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Create Group'),
-      ),
+      appBar: ref.watch(isSearchingProvider)
+          ? AppBar(
+              leading: IconButton(
+                onPressed: () {
+                  ref.read(isSearchingProvider.notifier).state = false;
+                  ref.read(searchController.notifier).state.clear();
+                },
+                icon: const Icon(
+                  Icons.arrow_back,
+                ),
+              ),
+              title: TextField(
+                  autofocus: true,
+                  onTapOutside: (event) {
+                    FocusScope.of(context).unfocus();
+                  },
+                  controller: ref.read(searchController),
+                  decoration: const InputDecoration(
+                    hintText: 'Search contacts',
+                  ),
+                  ))
+          : AppBar(
+              title: const Text('Create Group'),
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    ref.read(isSearchingProvider.notifier).state =
+                        !ref.read(isSearchingProvider);
+                  },
+                  icon: const Icon(
+                    Icons.search,
+                  ),
+                ),
+              ],
+            ),
       body: Center(
         child: Column(
           children: [
@@ -83,9 +118,13 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: TextField(
+                onTapOutside: (event) {
+                  FocusScope.of(context).unfocus();
+                },
                 controller: groupNameController,
                 decoration: const InputDecoration(
                   hintText: 'Enter Group Name',
+                      labelText: 'Group Name',
                 ),
               ),
             ),

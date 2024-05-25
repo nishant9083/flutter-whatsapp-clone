@@ -3,6 +3,7 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_sound/public/flutter_sound_recorder.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:whatsapp_ui/common/utils/colors.dart';
@@ -82,6 +83,14 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
     }
   }
 
+
+  void captureImage() async {
+    final File? image = await ImagePicker().pickImage(source: ImageSource.camera) as File;
+    if (image != null) {
+      sendFileMessage(image, MessageEnum.image);
+    }
+  }
+
   void sendFileMessage(
     File file,
     MessageEnum messageEnum,
@@ -106,6 +115,13 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
     File? video = await pickVideoFromGallery(context);
     if (video != null) {
       sendFileMessage(video, MessageEnum.video);
+    }
+  }
+
+  void selectDocument() async {
+    File? document = await pickDocument(context);
+    if (document != null) {
+      sendFileMessage(document, MessageEnum.document);
     }
   }
 
@@ -182,7 +198,7 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
                   },
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: mobileChatBoxColor,
+                    fillColor: Theme.of(context).brightness == Brightness.dark? mobileChatBoxColor: lightMobileChatBoxColor,
                     prefixIcon: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 5.0),
                       child: SizedBox(
@@ -213,7 +229,7 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           IconButton(
-                            onPressed: selectImage,
+                            onPressed: captureImage,
                             icon: const Icon(
                               Icons.camera_alt,
                               color: Colors.grey,
@@ -323,7 +339,7 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
                   bottomSheetIcons(
                       Icons.insert_drive_file, Colors.indigo, "Document"),
                   SizedBox(width: 40),
-                  bottomSheetIcons(Icons.camera_alt, Colors.pink, "Camera"),
+                  bottomSheetIcons(Icons.video_collection, Colors.pink, "Video"),
                   SizedBox(width: 40),
                   bottomSheetIcons(Icons.insert_photo, Colors.purple, "Gallery")
                 ],
@@ -350,7 +366,21 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
 
   Widget bottomSheetIcons(IconData icon, Color bgColor, String text) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        if (text == "Document") {
+          selectDocument();
+        } else if (text == "Video") {
+          selectVideo();
+        } else if (text == "Gallery") {
+          selectImage();
+        } else if (text == "Audio") {
+          // sendTextMessage();
+        } else if (text == "Location") {
+          // pickLocation();
+        } else {
+          // pickContact();
+        }
+      },
       child: Column(
         children: [
           CircleAvatar(

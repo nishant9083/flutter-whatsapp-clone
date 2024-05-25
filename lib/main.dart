@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:whatsapp_ui/common/utils/colors.dart';
 import 'package:whatsapp_ui/common/widgets/error.dart';
 import 'package:whatsapp_ui/common/widgets/loader.dart';
+import 'package:whatsapp_ui/common/widgets/splash_screen.dart';
 import 'package:whatsapp_ui/features/auth/controller/auth_controller.dart';
 import 'package:whatsapp_ui/features/landing/screens/landing_screen.dart';
 import 'package:whatsapp_ui/firebase_options.dart';
@@ -48,13 +49,33 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Whatsapp UI',
-      theme: ThemeData.dark().copyWith(
+      title: 'ChatBh',
+      theme: ThemeData(
+        // Define the default brightness and colors.
+        brightness: Brightness.light,
+        scaffoldBackgroundColor: lightBackgroundColor,
+        appBarTheme: const AppBarTheme(color: lightAppBarColor),
+        tabBarTheme: const TabBarTheme(
+          labelColor: lightTabColor,
+          indicatorColor: lightTabColor,
+          unselectedLabelColor: Colors.black,
+        ),
+        primaryColor: Colors.lightBlue[800],
+        // accentColor: Colors.cyan[600],
+      ),
+      darkTheme: ThemeData(
+        // Define the default brightness and colors.
+        brightness: Brightness.dark,
         scaffoldBackgroundColor: backgroundColor,
-        appBarTheme: const AppBarTheme(
-          color: appBarColor,
+        appBarTheme: const AppBarTheme(color: appBarColor
+            ),
+        tabBarTheme: const TabBarTheme(
+          labelColor: tabColor,
+          indicatorColor: tabColor,
+          unselectedLabelColor: Colors.grey,
         ),
       ),
+      themeMode: ThemeMode.system,
       onGenerateRoute: (settings) => generateRoute(settings),
       home: ref.watch(userDataAuthProvider).when(
             data: (user) {
@@ -68,7 +89,7 @@ class MyApp extends ConsumerWidget {
                 error: err.toString(),
               );
             },
-            loading: () => const Loader(),
+            loading: () => const SplashScreen(),
           ),
     );
   }

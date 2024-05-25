@@ -23,7 +23,7 @@ class GroupController {
   });
 
   void createGroup(BuildContext context, String name, File profilePic,
-      List<Contact> selectedContact) {
+      List<Map<String, dynamic>> selectedContact) {
     groupRepository.createGroup(context, name, profilePic, selectedContact);
   }
 }

@@ -14,7 +14,7 @@
     <uses-permission  android:name="android.permission.BLUETOOTH"  />
    <application
         android:label="ChatBh"
-        android:icon="@drawable/chatbh">
+        android:icon="@drawable/chatbh1">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

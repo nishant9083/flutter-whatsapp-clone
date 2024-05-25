@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/contact.dart' as Contact;
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:whatsapp_ui/common/enums/message_enum.dart';
@@ -58,11 +60,11 @@ class ChatRepository {
     });
   }
 
-  Stream<List<Group>> getChatGroups() {
+  Stream<List<ChatGroup>> getChatGroups() {
     return firestore.collection('groups').snapshots().map((event) {
-      List<Group> groups = [];
+      List<ChatGroup> groups = [];
       for (var document in event.docs) {
-        var group = Group.fromMap(document.data());
+        var group = ChatGroup.fromMap(document.data());
         if (group.membersUid.contains(auth.currentUser!.uid)) {
           groups.add(group);
         }

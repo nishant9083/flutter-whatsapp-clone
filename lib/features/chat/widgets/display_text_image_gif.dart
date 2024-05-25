@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:whatsapp_ui/common/enums/message_enum.dart';
 import 'package:whatsapp_ui/features/chat/widgets/audio_player.dart';
 import 'package:whatsapp_ui/features/chat/widgets/video_player_item.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 class DisplayTextImageGIF extends StatelessWidget {
   final String message;
   final MessageEnum type;
@@ -61,48 +61,57 @@ class DisplayTextImageGIF extends StatelessWidget {
                     ? CachedNetworkImage(
                         imageUrl: message,
                       )
-                    : GestureDetector(
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return Stack(
-                                children: <Widget>[
-                                  GestureDetector(
-                                    child: Container(
-                                      width: double.infinity,
-                                      height: double.infinity,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  InteractiveViewer(
-                                    boundaryMargin: const EdgeInsets.all(20.0),
-                                    minScale: 1.0,
-                                    maxScale: 4.0,
-                                    panEnabled: false,
-
-                                    child: Center(
-                                      child: CachedNetworkImage(
-                                        imageUrl: message,
-                                        fit: BoxFit.contain,
+                    : type == MessageEnum.document
+                        ? ListTile(
+                            leading: const Icon(Icons.insert_drive_file),
+                            title: const Text('Document'),
+                            onTap: () {
+                              // Open the document
+                              launchUrl(Uri.parse(message),);
+                            },
+                          )
+                        : GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return Stack(
+                                    children: <Widget>[
+                                      GestureDetector(
+                                        child: Container(
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                          color: Colors.black,
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ],
+                                      InteractiveViewer(
+                                        boundaryMargin:
+                                            const EdgeInsets.all(20.0),
+                                        minScale: 1.0,
+                                        maxScale: 4.0,
+                                        panEnabled: false,
+                                        child: Center(
+                                          child: CachedNetworkImage(
+                                            imageUrl: message,
+                                            fit: BoxFit.contain,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
                               );
                             },
-                          );
-                        },
-                        child: SizedBox(
-                          height: 300,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: CachedNetworkImage(
-                              imageUrl: message,
-                              fit: BoxFit.cover,
+                            child: SizedBox(
+                              height: 300,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: CachedNetworkImage(
+                                  imageUrl: message,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      );
+                          );
   }
 }

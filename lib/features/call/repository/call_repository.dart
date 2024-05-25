@@ -70,7 +70,7 @@ class CallRepository {
           .collection('groups')
           .doc(senderCallData.receiverId)
           .get();
-      model.Group group = model.Group.fromMap(groupSnapshot.data()!);
+      model.ChatGroup group = model.ChatGroup.fromMap(groupSnapshot.data()!);
 
       for (var id in group.membersUid) {
         await firestore
@@ -116,7 +116,7 @@ class CallRepository {
       await firestore.collection('call').doc(callerId).delete();
       var groupSnapshot =
           await firestore.collection('groups').doc(receiverId).get();
-      model.Group group = model.Group.fromMap(groupSnapshot.data()!);
+      model.ChatGroup group = model.ChatGroup.fromMap(groupSnapshot.data()!);
       for (var id in group.membersUid) {
         await firestore.collection('call').doc(id).delete();
       }

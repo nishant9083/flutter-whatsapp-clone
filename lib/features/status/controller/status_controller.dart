@@ -34,6 +34,10 @@ class StatusController {
     });
   }
 
+  Stream<Status> getMyStatus(BuildContext context) {
+    return statusRepository.getMyStatus();
+  }
+
   Future<List<Status>> getStatus(BuildContext context) async {
     List<Status> statuses = await statusRepository.getStatus(context);
     return statuses;

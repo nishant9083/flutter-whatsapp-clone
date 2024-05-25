@@ -30,6 +30,7 @@ class StatusRepository {
     required this.ref,
   });
 
+
   void uploadStatus({
     required String username,
     required String profilePic,
@@ -54,6 +55,16 @@ class StatusRepository {
       List<String> uidWhoCanSee = [];
 
       for (int i = 0; i < contacts.length; i++) {
+
+        if(contacts[i].phones.isEmpty || contacts[i].phones[0].number.replaceAll(
+              ' ',
+              '',
+            ).length < 10 || contacts[i].phones[0].number.replaceAll(
+              ' ',
+              '',
+            ).length > 13){
+          continue;
+        }
         var userDataFirebase = await firestore
             .collection('users')
             .where(
@@ -79,7 +90,6 @@ class StatusRepository {
             isEqualTo: auth.currentUser!.uid,
           )
           .get();
-
       if (statusesSnapshot.docs.isNotEmpty) {
         Status status = Status.fromMap(statusesSnapshot.docs[0].data());
         statusImageUrls = status.photoUrl;
@@ -105,12 +115,20 @@ class StatusRepository {
         statusId: statusId,
         whoCanSee: uidWhoCanSee,
       );
-
       await firestore.collection('status').doc(statusId).set(status.toMap());
     } catch (e) {
-      print('error is here');
       showSnackBar(context: context, content: e.toString());
     }
+  }
+
+  Stream<Status> getMyStatus() {
+    return firestore
+        .collection('status')
+        .where('uid', isEqualTo: auth.currentUser!.uid)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) => Status.fromMap(doc.data())).first;
+    });
   }
 
   Future<List<Status>> getStatus(BuildContext context) async {
@@ -120,8 +138,23 @@ class StatusRepository {
       if (await FlutterContacts.requestPermission()) {
         contacts = await FlutterContacts.getContacts(withProperties: true);
       }
+
       for (int i = 0; i < contacts.length; i++) {
-        // print('${i}/${contacts[i].phones[0].number}/nishant');
+        if(contacts[i].phones.isEmpty || contacts[i].phones[0].number.replaceAll(
+          ' ',
+          '',
+        ).length < 10 || contacts[i].phones[0].number.replaceAll(
+          ' ',
+          '',
+        ).length > 13 || contacts[i].phones[0].number.replaceAll(
+          ' ',
+          '',
+        ) == auth.currentUser!.phoneNumber!.replaceAll(
+          ' ',
+          '')
+        ){
+          continue;
+        }
         if (contacts[i].phones.isNotEmpty) {
           var statusesSnapshot = await firestore
               .collection('status')

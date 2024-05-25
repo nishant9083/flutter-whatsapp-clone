@@ -5,20 +5,32 @@ import 'package:whatsapp_ui/common/widgets/error.dart';
 import 'package:whatsapp_ui/features/auth/screens/login_screen.dart';
 import 'package:whatsapp_ui/features/auth/screens/otp_screen.dart';
 import 'package:whatsapp_ui/features/auth/screens/user_information_screen.dart';
+import 'package:whatsapp_ui/features/chat/screens/user_profile_screen.dart';
 import 'package:whatsapp_ui/features/group/screens/create_group_screen.dart';
 import 'package:whatsapp_ui/features/select_contacts/screens/select_contacts_screen.dart';
 import 'package:whatsapp_ui/features/chat/screens/mobile_chat_screen.dart';
 import 'package:whatsapp_ui/features/status/screens/confirm_status_screen.dart';
 import 'package:whatsapp_ui/features/status/screens/status_screen.dart';
+import 'package:whatsapp_ui/mobile_layout_screen.dart';
 import 'package:whatsapp_ui/models/status_model.dart';
 
+import 'features/landing/screens/landing_screen.dart';
 import 'features/profile/screens/profile_screen.dart';
+import 'models/user_model.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
     case LoginScreen.routeName:
       return MaterialPageRoute(
         builder: (context) => const LoginScreen(),
+      );
+      case LandingScreen.routeName:
+      return MaterialPageRoute(
+        builder: (context) => const LandingScreen(),
+      );
+      case MobileLayoutScreen.routeName:
+      return MaterialPageRoute(
+        builder: (context) => const MobileLayoutScreen(),
       );
     case OTPScreen.routeName:
       final verificationId = settings.arguments as String;
@@ -54,6 +66,13 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(
         builder: (context) => ConfirmStatusScreen(
           file: file,
+        ),
+      );
+    case UserProfileScreen.routeName:
+      final arguments = settings.arguments as UserModel;
+      return MaterialPageRoute(
+        builder: (context) => UserProfileScreen(
+          arguments,
         ),
       );
     case StatusScreen.routeName:

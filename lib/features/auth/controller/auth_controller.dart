@@ -58,8 +58,8 @@ class AuthController {
       context: context,
     );
   }
-  void signOut() {
-    authRepository.logOut();
+  void signOut(BuildContext context) {
+    authRepository.logOut(context);
   }
 
   Stream<UserModel> userDataById(String userId) {
